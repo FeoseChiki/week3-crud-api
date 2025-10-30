@@ -29,7 +29,7 @@ app.get('/todos/:id', (req, res) =>{
     res.status(200).json(todo)
 });
 
-app.get('/todos/active', (req, res) => {
+app.get('/todo/active', (req, res) => {
     const activeTodos = todos.filter((t) => t.completed === false);
     res.status(200).json(activeTodos);
 });
