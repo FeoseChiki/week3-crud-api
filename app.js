@@ -8,10 +8,21 @@ const app = express();
 
 const cors = require('cors');
 
+const logRequest = require('./logger.js');
+
+const validateTodo = require('./validator.js');
+
 app.use(express.json());
 
-app.use(cors('*'));
+app.use(cors());
 
+/*const corsOptions = {
+  origin: 'http://example.com',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+  */
+
+app.use(logRequest);
 app.listen(PORT, () =>{
     console.log(`App is running on ${PORT}`);
 });
@@ -38,7 +49,7 @@ app.get('/todo/active', (req, res) => {
     res.status(200).json(activeTodos);
 });
 
-app.post('/todos', (req,res) => {
+app.post('/todos', validateTodo, (req,res) => {
     const {task} = req.body
 
     if (!task || task.length <= 2) {
