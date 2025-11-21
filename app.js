@@ -8,21 +8,11 @@ const app = express();
 
 const cors = require('cors');
 
-const logRequest = require('./logger.js');
-
-const validateTodo = require('./validator.js');
-
 app.use(express.json());
 
 app.use(cors());
 
-/*const corsOptions = {
-  origin: 'http://example.com',
-  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-}
-  */
 
-app.use(logRequest);
 app.listen(PORT, () =>{
     console.log(`App is running on ${PORT}`);
 });
@@ -38,10 +28,17 @@ app.get('/todos', (req,res) => {
 });
 
 app.get('/todos/:id', (req, res) =>{
-    const id = parseInt(req.params.id)
+        const id = parseInt(req.params.id);
+        if (isNaN(id)) {
+            throw new Error ('Invalid ID');
+        }
     const todo = todos.find((t) => t.id ===id);
-    if (!todo) return res.status(404).json({message: 'Todo not found'});
-    res.status(200).json(todo)
+
+    if (!todo) {
+        return res.status(404).json({message: 'Todo not found'});
+    }
+
+    res.status(200).json(todo);
 });
 
 app.get('/todo/active', (req, res) => {
@@ -49,8 +46,8 @@ app.get('/todo/active', (req, res) => {
     res.status(200).json(activeTodos);
 });
 
-app.post('/todos', validateTodo, (req,res) => {
-    const {task} = req.body
+app.post('/todos', (req,res) => {
+     const {task} = req.body
 
     if (!task || task.length <= 2) {
         return res.status(400).json({message: 'Please provide the task'});
@@ -58,12 +55,11 @@ app.post('/todos', validateTodo, (req,res) => {
 
     const newTodo = {id: todos.length + 1, ...req.body};
     todos.push(newTodo);
-    res.status(201).json(newTodo);
-   
+    res.status(201).json(newTodo); 
 });
 
 app.patch('/todos/:id', (req,res) =>{
-    const id = parseInt(req.params.id)
+     const id = parseInt(req.params.id)
     const todo = todos.find(t => t.id ===parseInt(req.params.id));
     if (!todo) return res.status(404).json({message: 'Todo not found'});
     Object.assign(todo, req.body);
@@ -79,7 +75,10 @@ app.delete('/todos/:id', (req,res) => {
     res.status(204).send();
 });
 
-
+app.get('/todos/compleed', (req, res) =>{
+       const completed = todos.filter((t) => t.completed);
+       res.json(completed); 
+});
 
 app.use((err, req, res, next) => {
     res.status(500).json({error: 'Server error!'});

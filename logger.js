@@ -1,7 +1,7 @@
-const logRequeat = (req, res, next) =>{
-    const timeStamp = new Date(). toISOString()
-    console.log(`${timeStamp}- ${req.method}- ${req.URL} from ${req.ip}`);
+const logRequest = (req, res, next) =>{
+    const timeStamp = new Date(). toISOString();
+    console.log(`${timeStamp}- ${req.method}- ${req.url} from ${req.ip}`);
     next();
 };
 
-module.export = logRequest
+module.exports = logRequest;

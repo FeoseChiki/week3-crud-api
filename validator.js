@@ -1,8 +1,8 @@
-const joi = require('joi')
+const Joi = require('joi')
 
 const validateTodo = (req, res, next) =>{
     const schema = Joi.object({
-        task: Joi.string().min(3).max(100).required,
+        task: Joi.string().min(3).max(100).required(),
         completed : Joi.boolean().default(false)
     });
 
@@ -14,4 +14,4 @@ const validateTodo = (req, res, next) =>{
     next();
 };
 
-module.export = validateTodo;
+module.exports = validateTodo;
